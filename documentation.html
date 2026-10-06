@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenMLCore - Technical Documentation </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              purple: '#7c3aed',
+              blue: '#3b82f6',
+              darkBg: '#0b0f17',
+              cardBg: '#131b2e',
+              border: '#1f293d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar Styles */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0b0f17; }
+    ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+    
+    .tab-active {
+      background-color: #7c3aed !important;
+      color: #ffffff !important;
+      border-color: #8b5cf6 !important;
+      box-shadow: 0 4px 14px 0 rgba(124, 58, 237, 0.39);
+    }
+  </style>
+</head>
+<body class="bg-[#0b0f17] text-slate-200 font-sans min-h-screen flex flex-col selection:bg-purple-500 selection:text-white">
+
+  <header class="sticky top-0 z-50 bg-[#0b0f17]/90 backdrop-blur border-b border-[#1f293d]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Logo OpenMLCore SVG exact -->
+      <a href="index.html" class="flex items-center space-x-3 group">
+        <div class="w-10 h-10 rounded-xl bg-[#131b2e] border border-[#1f293d] p-1.5 flex items-center justify-center shadow-lg shadow-purple-950/40 group-hover:border-purple-500/50 transition">
+          <svg viewBox="0 0 100 100" class="w-full h-full">
+            <line x1="20" y1="20" x2="80" y2="80" stroke="#3b82f6" stroke-width="8" stroke-linecap="round" />
+            <line x1="80" y1="20" x2="20" y2="80" stroke="#3b82f6" stroke-width="8" stroke-linecap="round" />
+            <circle cx="50" cy="50" r="32" stroke="#8b5cf6" stroke-width="8" fill="none" />
+            <circle cx="50" cy="50" r="12" fill="#3b82f6" />
+          </svg>
+        </div>
+        <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-300">
+          OpenMLCore
+        </span>
+      </a>
+      <div class="flex items-center space-x-3">
+        <span class="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 font-mono hidden sm:inline-block">API v1.0</span>
+        <a href="https://github.com/sebastien-doyez2812/OpenML-core" target="_blank" class="text-xs bg-[#131b2e] border border-[#1f293d] hover:border-purple-500/50 px-3 py-1.5 rounded-lg text-slate-300 transition flex items-center space-x-1.5">
+          <i class="fab fa-github"></i>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 py-8 w-full space-y-8">
+    
+    <!-- Title Banner -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1f293d] pb-6">
+      <div>
+        <div class="flex items-center space-x-2 text-xs font-mono text-purple-400 mb-1">
+          <i class="fas fa-book-open"></i>
+          <span>TECHNICAL DOCUMENTATION</span>
+        </div>
+        <h1 class="text-3xl font-extrabold text-white tracking-tight">Technical overview of the framework</h1>
+        <p class="text-slate-400 text-sm mt-1">Discover architectures, loss functions, metrics ready-to-use in <code class="text-purple-300 font-mono">openmlcore</code>.</p>
+      </div>
+
+      <!-- Quick Search Bar -->
+      <div class="relative min-w-[280px]">
+        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+        <input 
+          type="text" 
+          id="tab-search" 
+          placeholder="search here..." 
+          onkeyup="filterCurrentTab()"
+          class="w-full pl-9 pr-4 py-2 bg-[#131b2e] border border-[#1f293d] rounded-xl text-xs text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-500 transition shadow-inner"
+        >
+      </div>
+    </div>
+
+    <!-- MAIN TABS CONTROL BAR -->
+    <div class="flex flex-wrap items-center gap-3 bg-[#131b2e] border border-[#1f293d] p-1.5 rounded-2xl">
+      <button 
+        onclick="switchTab('tab-architectures')" 
+        id="btn-tab-architectures"
+        class="tab-btn tab-active flex-1 sm:flex-none flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 border border-transparent text-slate-400 hover:text-white"
+      >
+        <i class="fas fa-cubes text-base"></i>
+        <span>Model Architectures</span>
+      </button>
+
+      <button 
+        onclick="switchTab('tab-losses')" 
+        id="btn-tab-losses"
+        class="tab-btn flex-1 sm:flex-none flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 border border-transparent text-slate-400 hover:text-white"
+      >
+        <i class="fas fa-calculator text-base"></i>
+        <span>Loss Functions</span>
+      </button>
+
+      <button 
+        onclick="switchTab('tab-metrics')" 
+        id="btn-tab-metrics"
+        class="tab-btn flex-1 sm:flex-none flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 border border-transparent text-slate-400 hover:text-white"
+      >
+        <i class="fas fa-chart-line text-base"></i>
+        <span>Metrics</span>
+      </button>
+    </div>
+
+    <div id="tab-architectures" class="tab-content space-y-8">
+      
+      <!-- Section Intro Header -->
+      <div class="bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex items-start space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fas fa-cubes"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white">Model Architectures Availables</h2>
+            <p class="text-slate-300 text-sm mt-1 leading-relaxed">
+              OpenMLCore provides ready-to-uses machine learning tool, written in PyTorch for computer vision tasks such as segmentation or classification. Click on any cards to learn more.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Architectures -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 search-container">
+
+        <!-- UNet Card -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] hover:border-purple-500/50 rounded-2xl p-6 transition group flex flex-col justify-between" data-search="unet segmentation vision encodeur decodeur">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20">openmlcore.models</span>
+              <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">Stable</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white font-mono group-hover:text-purple-400 transition">UNet</h3>
+              <p class="text-xs text-purple-300 mt-0.5">Semantic Segmentation Pixel by Pixel</p>
+            </div>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              CNN Architecture based on an encoder, a bottleneck and a decoder. The U-Net uses skip connection to provide spatial infos to the decoder to create the segmented image.
+            </p>
+            <div class="bg-[#0b0f17] p-3 rounded-xl border border-[#1f293d] space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Input:</span> (B, C_in, H, W)</div>
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Output:</span> (B, nb_class, H, W)</div>
+            </div>
+          </div>
+          <div class="pt-5 border-t border-[#1f293d] mt-5 flex items-center justify-between">
+            <span class="text-xs text-slate-500">Params: input_channels, output_channels, depth, initial_filters</span>
+            <span class="text-xs text-purple-400 font-semibold group-hover:translate-x-1 transition flex items-center space-x-1">
+              <span>Details</span>
+              <i class="fas fa-chevron-right text-[10px]"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Attention Unet Card -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] hover:border-purple-500/50 rounded-2xl p-6 transition group flex flex-col justify-between" data-search="resnet backbone classification residual">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20">openmlcore.models</span>
+              <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">Stable</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white font-mono group-hover:text-purple-400 transition">Attention Unet</h3>
+              <p class="text-xs text-purple-300 mt-0.5">Advanced CNN architecture</p>
+            </div>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Based on the Unet, the Att-U-Net uses soft attenntion gates to have region of interest in the images and make the prediction easier.
+            </p>
+            <div class="bg-[#0b0f17] p-3 rounded-xl border border-[#1f293d] space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Input:</span> (B, C_in, H, W)</div>
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Output:</span> (B, nb_class, H, W)</div>
+            </div>
+          </div>
+          <div class="pt-5 border-t border-[#1f293d] mt-5 flex items-center justify-between">
+            <span class="text-xs text-slate-500">Params: input_channels, output_channels, depth, initial_filters</span>
+            <span class="text-xs text-purple-400 font-semibold group-hover:translate-x-1 transition flex items-center space-x-1">
+              <span>Détails</span>
+              <i class="fas fa-chevron-right text-[10px]"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Unet ++ -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] hover:border-purple-500/50 rounded-2xl p-6 transition group flex flex-col justify-between" data-search="deeplabv3 atrous aspp segmentation">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20">openmlcore.models</span>
+              <span class="text-xs font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">En development</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white font-mono group-hover:text-purple-400 transition">Unet++</h3>
+              <p class="text-xs text-purple-300 mt-0.5">Advanced CNN</p>
+            </div>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              TODO
+            </p>
+            <div class="bg-[#0b0f17] p-3 rounded-xl border border-[#1f293d] space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Input:</span> (B, C_in, H, W)</div>
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Output:</span> (B, nb_class, H, W)</div>
+            </div>
+          </div>
+          <div class="pt-5 border-t border-[#1f293d] mt-5 flex items-center justify-between">
+            <span class="text-xs text-slate-500">Statut: Soon v1.1</span>
+            <span class="text-xs text-amber-400 font-semibold group-hover:translate-x-1 transition flex items-center space-x-1">
+              <span>Soon</span>
+              <i class="fas fa-clock text-[10px]"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- ADD HERE OTHER ARCHITECTURES-->
+
+      </div>
+    </div>
+
+    <div id="tab-losses" class="tab-content space-y-8 hidden">
+      
+      <!-- Section Intro Header -->
+      <div class="bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex items-start space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fas fa-calculator"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white">Loss Functions</h2>
+            <p class="text-slate-300 text-sm mt-1 leading-relaxed">
+              Ready-to-use loss function, and the possibility to create custom loss based on classical one. Available in the sub-package <code class="text-blue-300 font-mono">openmlcore.loss</code>. Compatible with PyTorch.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Losses Grid & Details -->
+      <div class="space-y-6 search-container">
+
+        <!-- DiceLoss Item -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 space-y-4" data-search="diceloss loss overlap sorensen segmentation">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1f293d] pb-4">
+            <div class="flex items-center space-x-3">
+              <h3 class="text-xl font-bold text-white font-mono">DiceLoss</h3>
+              <span class="px-2.5 py-0.5 rounded text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">Overlap-based</span>
+            </div>
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full w-max">Stable</span>
+          </div>
+
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Based on the Sørensen–Dice coefficient, it prioritizes the overlap between the ground truth and the prediction. Unlike BCE, Dice Loss operates at the region level. It is very effective for small objects or class imbalance.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#0b0f17] p-4 rounded-xl border border-[#1f293d]">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Example (weights for multiclass):</span>
+              <pre class="font-mono text-xs text-blue-300 overflow-x-auto"><code>from openmlcore.loss import DiceLoss
+
+weights_for_class = torch.tensor([4.0, 1.0, 4.0, 3.5, 2.0])
+myLoss = DiceLoss(weights=weights_for_class)
+</code></pre>
+            </div>
+            <div class="bg-[#0b0f17] p-4 rounded-xl border border-[#1f293d]">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Key Parameters:</span>
+              <ul class="text-xs text-slate-300 space-y-1.5 font-mono">
+                <li><span class="text-purple-300">weights (Tensor=None)</span>: weights for multiclass</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- BCEWithLogitsLoss Item -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 space-y-4" data-search="bcewithlogitsloss cross entropy binary sigmoid">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1f293d] pb-4">
+            <div class="flex items-center space-x-3">
+              <h3 class="text-xl font-bold text-white font-mono">BCEWithLogitsLoss</h3>
+              <span class="px-2.5 py-0.5 rounded text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">Entropy-based</span>
+            </div>
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full w-max">Stable</span>
+          </div>
+
+          <p class="text-slate-300 text-sm leading-relaxed">
+            BCE is based on a logarithmic difference and works on a pixel-by-pixel basis. It penalizes incorrect predictions more than it rewards correct ones.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#0b0f17] p-4 rounded-xl border border-[#1f293d]">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Example for multiclass segmentation: :</span>
+              <pre class="font-mono text-xs text-blue-300 overflow-x-auto"><code>from openmlcore.loss import BCEWithLogitsLoss
+
+weights_for_class = torch.tensor([4.0, 1.0, 4.0, 3.5, 2.0])
+myLoss = BCEWithLogitsLoss(weights=weights_for_class),</code></pre>
+            </div>
+            <div class="bg-[#0b0f17] p-4 rounded-xl border border-[#1f293d]">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Paramètres clés :</span>
+              <ul class="text-xs text-slate-300 space-y-1.5 font-mono">
+                <li><span class="text-purple-300">Weights (Tensor)</span>: Weights for multiclass segmentation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!---ADD LOSS HERE-->
+
+
+
+        <!-- CustomLoss Item -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 space-y-4" data-search="customloss loss combination hybrid composite">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1f293d] pb-4">
+            <div class="flex items-center space-x-3">
+              <h3 class="text-xl font-bold text-white font-mono">CustomLoss</h3>
+              <span class="px-2.5 py-0.5 rounded text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">Composite</span>
+            </div>
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full w-max">Stable</span>
+          </div>
+
+          <p class="text-slate-300 text-sm leading-relaxed">
+            With CustomLoss, you can ponderate classical loss to imporve your finetuning!
+          </p>
+
+          <div class="bg-[#0b0f17] p-4 rounded-xl border border-[#1f293d]">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Example : Combinaison Dice + BCE (0.7 * Dice + 0.3 * BCE) :</span>
+            <pre class="font-mono text-xs text-blue-300 overflow-x-auto"><code>from openmlcore.loss import CustomLoss, DiceLoss, BCEWithLogitsLoss
+
+weights_for_class = torch.tensor([4.0, 1.0, 4.0, 3.5, 2.0])
+weights_type_loss = [0.7, 0.3]
+
+myLoss = CustomLoss(loss_fcns=[ DiceLoss(weights=weights_for_class), BCEWithLogitsLoss(weights=weights_for_class)], name="CustomLoss", coefficients=weights_type_loss)</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-metrics" class="tab-content space-y-8 hidden">
+      
+      <!-- Section Intro Header -->
+      <div class="bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex items-start space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white">Performance metrics</h2>
+            <p class="text-slate-300 text-sm mt-1 leading-relaxed">
+              Metrics function avilable in <code class="text-emerald-300 font-mono">openmlcore.metrics</code> to validate the quality of your models.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 search-container">
+
+        <!-- Accuracy Card -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 space-y-4" data-search="accuracy metric pixel correctness precision globale">
+          <div class="flex items-center justify-between border-b border-[#1f293d] pb-3">
+            <h3 class="text-xl font-bold text-white font-mono">accuracy</h3>
+            <span class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full font-mono">Pixel Accuracy</span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Return a list of percentage of pixels correctly predicted compared to the ground truth.
+          </p>
+
+          <div class="bg-[#0b0f17] p-3.5 rounded-xl border border-[#1f293d]">
+            <span class="text-[11px] text-slate-400 font-semibold block mb-1">Signature :</span>
+            <code class="text-xs font-mono text-emerald-300">accuracy(y_pred, y_true)</code>
+          </div>
+
+          <div class="text-xs text-slate-400 space-y-1">
+            <div class="flex justify-between"><span class="text-slate-500">Return :</span> <span class="text-slate-200 font-mono">list of float (0.0 to 1.0)</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Usage :</span> <span class="text-slate-200">balanced datasets</span></div>
+          </div>
+        </div>
+
+        <!-- IoU / Jaccard Index Card -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 space-y-4" data-search="iou jaccard index metric overlap intersection over union">
+          <div class="flex items-center justify-between border-b border-[#1f293d] pb-3">
+            <h3 class="text-xl font-bold text-white font-mono">iou</h3>
+            <span class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full font-mono">IoU / Jacard Index</span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed">
+            <strong>Intersection over Union (IoU)</strong> : Measure of the intersection divided by the union of the prediction and the ground truth.
+          </p>
+
+          <div class="bg-[#0b0f17] p-3.5 rounded-xl border border-[#1f293d]">
+            <span class="text-[11px] text-slate-400 font-semibold block mb-1">Signature :</span>
+            <code class="text-xs font-mono text-emerald-300">iou(y_pred, y_true, smooth=1e-6)</code>
+          </div>
+
+          <div class="text-xs text-slate-400 space-y-1">
+            <div class="flex justify-between"><span class="text-slate-500">Return :</span> <span class="text-slate-200 font-mono">list of float (0.0 to 1.0)</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Usage :</span> <span class="text-slate-200">Standard in segmentation tasks</span></div>
+          </div>
+        </div>
+
+        <!-- Precision Card -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 space-y-4" data-search="precision recall metric tp fp fn sensibility specificity">
+          <div class="flex items-center justify-between border-b border-[#1f293d] pb-3">
+            <h3 class="text-xl font-bold text-white font-mono">Precision</h3>
+            <span class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full font-mono">Dual Metric</span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Precision is equal to the real positive (TP) divided by the the predicted positives (TP + FP).
+          </p>
+
+          <div class="bg-[#0b0f17] p-3.5 rounded-xl border border-[#1f293d]">
+            <span class="text-[11px] text-slate-400 font-semibold block mb-1">Signature :</span>
+            <code class="text-xs font-mono text-emerald-300">precision_recall(y_pred, y_true)</code>
+          </div>
+
+          <div class="text-xs text-slate-400 space-y-1">
+            <div class="flex justify-between"><span class="text-slate-500">Formula :</span> <span class="text-slate-200 font-mono">TP / (TP + FP)</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Return :</span> <span class="text-slate-200 font-mono">List of float(multiclass usage)</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Usage :</span> <span class="text-slate-200">Errors analysis</span></div>
+          </div>
+        </div>
+
+        
+        <!-- Recall Card -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 space-y-4" data-search="precision recall metric tp fp fn sensibility specificity">
+          <div class="flex items-center justify-between border-b border-[#1f293d] pb-3">
+            <h3 class="text-xl font-bold text-white font-mono">Recall</h3>
+            <span class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full font-mono">Dual Metric</span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Recall is the division between the true Predicted positivve (TP) and the real positive (TP + FN).
+          </p>
+
+          <div class="bg-[#0b0f17] p-3.5 rounded-xl border border-[#1f293d]">
+            <span class="text-[11px] text-slate-400 font-semibold block mb-1">Signature :</span>
+            <code class="text-xs font-mono text-emerald-300">precision_recall(y_pred, y_true)</code>
+          </div>
+
+          <div class="text-xs text-slate-400 space-y-1">
+            <div class="flex justify-between"><span class="text-slate-500">Formula :</span> <span class="text-slate-200 font-mono">TP / (TP + FN)</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Return :</span> <span class="text-slate-200 font-mono">List of float(multiclass usage)</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Usage :</span> <span class="text-slate-200">Errors analysis</span></div>
+          </div>
+        </div>
+        
+        <!-- F1-Score / Dice Metric Card -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 space-y-4" data-search="f1 score dice metric harmonic mean recall precision">
+          <div class="flex items-center justify-between border-b border-[#1f293d] pb-3">
+            <h3 class="text-xl font-bold text-white font-mono">f1_score</h3>
+            <span class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full font-mono">Dice Score</span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Harmonic mean of precision and recall. Metric equivalent of the Sørensen–Dice coefficient.
+          </p>
+
+          <div class="bg-[#0b0f17] p-3.5 rounded-xl border border-[#1f293d]">
+            <span class="text-[11px] text-slate-400 font-semibold block mb-1">Signature :</span>
+            <code class="text-xs font-mono text-emerald-300">f1_score(y_pred, y_true, eps=1e-7)</code>
+          </div>
+
+          <div class="text-xs text-slate-400 space-y-1">
+            <div class="flex justify-between"><span class="text-slate-500">Formula :</span> <span class="text-slate-200 font-mono">2 * (P * R) / (P + R)</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Return :</span> <span class="text-slate-200 font-mono">List of float(multiclass usage)</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Usage :</span> <span class="text-slate-200">imbalanced datasets</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="border-t border-[#1f293d] py-8 bg-[#0b0f17] text-center text-slate-500 text-sm mt-auto">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p>Documentation Technique - <strong>OpenMLCore</strong></p>
+      <div class="flex items-center space-x-6 text-xs text-slate-400">
+        <a href="index.html" class="hover:text-purple-400 transition">Accueil</a>
+        <button onclick="switchTab('tab-architectures')" class="hover:text-purple-400 transition">Modèles</button>
+        <button onclick="switchTab('tab-losses')" class="hover:text-purple-400 transition">Losses</button>
+        <button onclick="switchTab('tab-metrics')" class="hover:text-purple-400 transition">Métriques</button>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let activeTabId = 'tab-architectures';
+
+    // Switch between tabs
+    function switchTab(tabId) {
+      activeTabId = tabId;
+
+      // Hide all contents
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => {
+        content.classList.add('hidden');
+      });
+
+      // Show targeted tab
+      const targetContent = document.getElementById(tabId);
+      if (targetContent) {
+        targetContent.classList.remove('hidden');
+      }
+
+      // Update Tab Buttons Styles
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('tab-active');
+      });
+
+      const activeBtn = document.getElementById(`btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('tab-active');
+      }
+
+      // Reset search filter on tab change
+      const searchInput = document.getElementById('tab-search');
+      if (searchInput) {
+        searchInput.value = '';
+        filterCurrentTab();
+      }
+    }
+
+    // Live search filter inside the active tab
+    function filterCurrentTab() {
+      const query = document.getElementById('tab-search').value.toLowerCase().trim();
+      const currentTab = document.getElementById(activeTabId);
+      if (!currentTab) return;
+
+      const items = currentTab.querySelectorAll('.search-item');
+
+      items.forEach(item => {
+        const searchText = item.getAttribute('data-search') ? item.getAttribute('data-search').toLowerCase() : item.innerText.toLowerCase();
+        
+        if (query === '' || searchText.includes(query)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    // Handle hash links if user opens documentation.html#losses directly
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash;
+      if (hash === '#losses') {
+        switchTab('tab-losses');
+      } else if (hash === '#metrics') {
+        switchTab('tab-metrics');
+      } else if (hash === '#models' || hash === '#architectures') {
+        switchTab('tab-architectures');
+      }
+    });
+  </script>
+
+</body>
+</html>
