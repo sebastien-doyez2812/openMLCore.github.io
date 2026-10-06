@@ -191,13 +191,13 @@
 
       <pre id="code-block" class="p-6 overflow-x-auto text-sm font-mono text-slate-300 leading-relaxed bg-[#0b0f17]"><code><span class="text-purple-400">import</span> torch
 
-<span class="text-purple-400">from</span> openmlcore.loss.loss <span class="text-purple-400">import</span> BCEWithLogitsLoss, CustomLoss, DiceLoss
 <span class="text-purple-400">from</span> torch.utils.data <span class="text-purple-400">import</span> DataLoader, Subset
-<span class="text-purple-400">from</span> src.openmlcore.models.UNets <span class="text-purple-400">import</span> UNet
-<span class="text-purple-400">from</span> src.openmlcore.base.data <span class="text-purple-400">import</span> SegmentationDataset
-<span class="text-purple-400">from</span> src.openmlcore.metrics.metrics <span class="text-purple-400">import</span> *
-
 <span class="text-purple-400">from</span> torchvision.transforms <span class="text-purple-400">import</span> v2
+<span class="text-purple-400">from</span> openmlcore.loss.loss <span class="text-purple-400">import</span> BCEWithLogitsLoss, CustomLoss, DiceLoss
+<span class="text-purple-400">from</span> openmlcore.models.UNets <span class="text-purple-400">import</span> UNet
+<span class="text-purple-400">from</span> openmlcore.base.data <span class="text-purple-400">import</span> SegmentationDataset
+<span class="text-purple-400">from</span> openmlcore.metrics.metrics <span class="text-purple-400">import</span> *
+
 
 <span class="text-slate-500"># Normalization & Transforms:</span>
 transforms = v2.Compose([
@@ -208,11 +208,9 @@ transforms = v2.Compose([
 ])
 
 NB_CLASSES = <span class="text-amber-300">5</span>
-
 <span class="text-slate-500"># Data Preparation:</span>
 train_dataset = SegmentationDataset(root_dir=<span class="text-green-400">"data/train"</span>, num_classes=NB_CLASSES, transform=transforms)
 val_dataset   = SegmentationDataset(root_dir=<span class="text-green-400">"data/val"</span>, num_classes=NB_CLASSES, transform=transforms)
-
 train_loader = DataLoader(train_dataset, batch_size=<span class="text-amber-300">4</span>, shuffle=<span class="text-amber-300">True</span>)
 val_loader   = DataLoader(val_dataset, batch_size=<span class="text-amber-300">4</span>, shuffle=<span class="text-amber-300">True</span>)
 
@@ -223,8 +221,6 @@ metrics = {
 }
 
 weights_for_class = torch.tensor([<span class="text-amber-300">1.0</span>, <span class="text-amber-300">1.2</span>, <span class="text-amber-300">1.5</span>, <span class="text-amber-300">1.0</span>, <span class="text-amber-300">1.0</span>])
-<span class="text-purple-400">assert</span> len(weights_for_class) == NB_CLASSES
-weights_type_loss = [<span class="text-amber-300">0.1</span>, <span class="text-amber-300">0.9</span>]
 
 myUnet = UNet(
     input_channels=<span class="text-amber-300">3</span>, 
