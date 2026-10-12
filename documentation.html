@@ -255,7 +255,65 @@
             </span>
           </div>
         </div>
+       
+        <!-- MobileUnetR Card -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] hover:border-purple-500/50 rounded-2xl p-6 transition group flex flex-col justify-between" data-search="MobileUnetR segmentation vision encodeur decodeur">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20">openmlcore.models</span>
+              <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">Stable</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white font-mono group-hover:text-purple-400 transition">MobileUnetR</h3>
+              <p class="text-xs text-purple-300 mt-0.5">Vision Transformers</p>
+            </div>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Vision Transformer Architecture based on an Unet architecture, with little weight Transformers. This model has the best performance on Cell dataset for now.
+            </p>
+            <div class="bg-[#0b0f17] p-3 rounded-xl border border-[#1f293d] space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Input:</span> (B, C_in, H, W)</div>
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Output:</span> (B, nb_class, H, W)</div>
+            </div>
+          </div>
+          <div class="pt-5 border-t border-[#1f293d] mt-5 flex items-center justify-between">
+            <span class="text-xs text-slate-500">Params: input_channels, output_channels, depth, initial_filters</span>
+            <span class="text-xs text-purple-400 font-semibold group-hover:translate-x-1 transition flex items-center space-x-1">
+              <span>Details</span>
+              <i class="fas fa-chevron-right text-[10px]"></i>
+            </span>
+          </div>
+        </div>
 
+        
+        <!-- QLoraSAM2 Card -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] hover:border-purple-500/50 rounded-2xl p-6 transition group flex flex-col justify-between" data-search="SAM2 segmentation vision encodeur decodeur">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20">openmlcore.models</span>
+              <span class="text-xs font-mono text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full">Soon</span>
+              <!--<span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">Soon</span>
+            -->
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white font-mono group-hover:text-purple-400 transition">Sam2 & QLoRA</h3>
+              <p class="text-xs text-purple-300 mt-0.5">Vision Transformers</p>
+            </div>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              SoTA from Meta for the task of segmentation. 
+            </p>
+            <div class="bg-[#0b0f17] p-3 rounded-xl border border-[#1f293d] space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Input:</span> (B, C_in, H, W)</div>
+              <div class="text-[11px] text-slate-400 font-mono"><span class="text-purple-400">Output:</span> (B, nb_class, H, W)</div>
+            </div>
+          </div>
+          <div class="pt-5 border-t border-[#1f293d] mt-5 flex items-center justify-between">
+            <span class="text-xs text-slate-500">Params: input_channels, output_channels, depth, initial_filters</span>
+            <span class="text-xs text-purple-400 font-semibold group-hover:translate-x-1 transition flex items-center space-x-1">
+              <span>Details</span>
+              <i class="fas fa-chevron-right text-[10px]"></i>
+            </span>
+          </div>
+        </div>
         <!-- ADD HERE OTHER ARCHITECTURES-->
 
       </div>
@@ -372,6 +430,38 @@ myLoss = BCEWithLogitsLoss(weights=weights_for_class),</code></pre>
           </div>
         </div>
 
+
+        
+        <!-- MSE Item -->
+        <div class="search-item bg-[#131b2e] border border-[#1f293d] rounded-2xl p-6 space-y-4" data-search="MSE mean square">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1f293d] pb-4">
+            <div class="flex items-center space-x-3">
+              <h3 class="text-xl font-bold text-white font-mono">MSE</h3>
+              <span class="px-2.5 py-0.5 rounded text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">Classic Loss</span>
+            </div>
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full w-max">Stable</span>
+          </div>
+
+          <p class="text-slate-300 text-sm leading-relaxed">
+            TODO
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#0b0f17] p-4 rounded-xl border border-[#1f293d]">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Example for multiclass segmentation: :</span>
+              <pre class="font-mono text-xs text-blue-300 overflow-x-auto"><code>from openmlcore.loss import BCEWithLogitsLoss
+
+weights_for_class = torch.tensor([4.0, 1.0, 4.0, 3.5, 2.0])
+myLoss = BCEWithLogitsLoss(weights=weights_for_class),</code></pre>
+            </div>
+            <div class="bg-[#0b0f17] p-4 rounded-xl border border-[#1f293d]">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Paramètres clés :</span>
+              <ul class="text-xs text-slate-300 space-y-1.5 font-mono">
+                <li><span class="text-purple-300">Weights (Tensor)</span>: Weights for multiclass segmentation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <!---ADD LOSS HERE-->
 
       </div>
